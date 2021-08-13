@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,12 +62,22 @@ namespace IdentityDemo.Service
             bool isValid = IsDetailValid(model, res);
             if (isValid)
             {
+
+                var myClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, model.AppName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+              
+                
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
 
                 var token = new JwtSecurityToken(
                     issuer: _config["JWT:ValidIssuer"],
                     audience: _config["JWT:ValidAudience"],
                     expires: DateTime.Now.AddHours(3),
+                    claims: myClaims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
                 return new Token { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), Expire= token.ValidTo };
