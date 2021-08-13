@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using IdentityDemo.Model;
+﻿using IdentityDemo.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +17,12 @@ namespace IdentityDemo.Controllers
         {
             return new Response() { Success = true, Message = "Verification controller", Data = null };
         }
+
         [HttpPost("Verify")]
-        public async Task<IActionResult> Verify()
+        public IActionResult Verify()
         {
 
-                return Ok(new Response { Status = "Success", Message = "Verify successfully!" });
-         
+            return Ok(new Response { Status = "Success", Message = "Verify successfully!" });
         }
     }
 }

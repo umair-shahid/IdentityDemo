@@ -18,26 +18,30 @@ namespace IdentityDemo.Service
 
         private readonly DbContext _context;
         private readonly IConfiguration _config;
+
         public AppRegistrationService(DbContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
         }
+
         public async Task<List<ApplicationRegisteration>> GetRegisteredApps()
         {
             var res = await _context.RegisteredApps.Select(x=>x).ToListAsync();
             return res;
         }
+
         public async Task<bool> IsAppExist(string name)
         {
             var res = await _context.RegisteredApps.Where(x => x.AppName == name).ToListAsync();
             return res.Any();
         }
-        public async Task<ApplicationRegistrationResponse> Register(ApplicationRegisteration model)
+
+        public async Task<ApplicationRegisteration> Register(ApplicationRegisteration model)
         {
             if (await IsAppExist(model.AppName))
             {
-                return new ApplicationRegistrationResponse() { Status=false,AppName = model.AppName, ClientId="",SecretKey="", };
+                return null;
             }
             var app = new ApplicationRegisteration() {
                 AppName = model.AppName,
@@ -48,13 +52,7 @@ namespace IdentityDemo.Service
             await _context.AddAsync<ApplicationRegisteration>(app);
             await _context.SaveChangesAsync();
 
-            return new ApplicationRegistrationResponse() {
-                Status=true ,
-                AppName = app.AppName,
-                ClientId = app.ClientId,
-                SecretKey = app.SecretKey,
-                CreatedAt = app.CreatedAt
-            };
+            return app;
            
         }
         public async Task<Token> GenerateToken(TokenGeneration model)

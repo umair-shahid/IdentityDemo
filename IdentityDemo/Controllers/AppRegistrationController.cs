@@ -49,8 +49,8 @@ namespace IdentityDemo.Controllers
         {
             try
             {
-                ApplicationRegistrationResponse res = await _appRegService.Register(model);
-                if (!res.Status)
+                ApplicationRegisteration res = await _appRegService.Register(model);
+                if (res==null)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "App already exist with this name" });
                 }
