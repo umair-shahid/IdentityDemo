@@ -70,7 +70,7 @@ namespace IdentityDemo.Service
                 };
 
               
-                
+              
                 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
 
                 var token = new JwtSecurityToken(
