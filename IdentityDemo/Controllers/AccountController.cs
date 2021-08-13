@@ -20,7 +20,6 @@ namespace IdentityDemo.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
-
         public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config)
         {
             _userManager = userManager;
@@ -57,6 +56,7 @@ namespace IdentityDemo.Controllers
       
         }
 
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(Login model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
@@ -85,30 +85,13 @@ namespace IdentityDemo.Controllers
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                     );
 
-                return Ok(new
+                return Ok(new Token
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                    Expire = token.ValidTo
                 });
             }
             return Unauthorized();
         }
-
-
-        [HttpPost("RegisterApp")]
-        public async Task<IActionResult> RegisterApp(ApplicationRegisteration model)
-        {
-            return Ok(new Response { Status = "Success", Message = "App created successfully!" });
-        }
-
-
-        [HttpPost("GenerateToken")]
-        public async Task<IActionResult> GenerateToken(TokenGeneration model)
-        {
-            return Ok(new Response { Status = "Success", Message = "App created successfully!" });
-        }
-        [HttpPost("Login")]
-
-       
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace IdentityDemo.Model
 {
@@ -7,6 +8,8 @@ namespace IdentityDemo.Model
         public ApplicationRegisteration()
         {
         }
+        [Key]
+        public int Id { get; set; }
         public string AppName { get; set; }
         public string SecretKey { get; set; }
         public string ClientId { get; set; }

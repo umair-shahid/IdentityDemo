@@ -16,6 +16,7 @@
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="Microsoft.OpenApi" />
+    <None Remove="Service\" />
     <None Remove="Utils\" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
+    <Folder Include="Service\" />
     <Folder Include="Utils\" />
   </ItemGroup>
 </Project>
