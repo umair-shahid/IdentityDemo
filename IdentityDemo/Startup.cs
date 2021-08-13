@@ -35,18 +35,18 @@ namespace IdentityDemo
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 1, 40))));
             services.AddControllers();
 
-         
-            //// For Identity  
+            // For Identity  
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<DbContext>()
                 .AddDefaultTokenProviders();
 
-           // Adding Authentication
+            // Adding Authentication
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+             //   options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             // Adding Jwt Bearer  
             .AddJwtBearer(options =>

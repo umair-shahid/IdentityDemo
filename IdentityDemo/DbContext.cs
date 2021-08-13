@@ -13,5 +13,6 @@ namespace IdentityDemo
     : base(options)
         {
         }
+        public DbSet<ApplicationRegisteration> RegisteredApps { get; set; }
     }
 }

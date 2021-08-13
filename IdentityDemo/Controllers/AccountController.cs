@@ -33,8 +33,9 @@ namespace IdentityDemo.Controllers
         {
             return new Response() { Success = true, Message = "Api is running", Data = null };
         }
-        [HttpPost]
-        public async Task<IActionResult> Post(Register model)
+
+        [HttpPost("RegisterUser")]
+        public async Task<IActionResult> RegisterUser(Register model)
         { 
 
               var userExists = await _userManager.FindByNameAsync(model.UserName);
@@ -55,7 +56,6 @@ namespace IdentityDemo.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
       
         }
-        [HttpPost("Login")]
 
         public async Task<IActionResult> Login(Login model)
         {
@@ -93,5 +93,22 @@ namespace IdentityDemo.Controllers
             }
             return Unauthorized();
         }
+
+
+        [HttpPost("RegisterApp")]
+        public async Task<IActionResult> RegisterApp(ApplicationRegisteration model)
+        {
+            return Ok(new Response { Status = "Success", Message = "App created successfully!" });
+        }
+
+
+        [HttpPost("GenerateToken")]
+        public async Task<IActionResult> GenerateToken(TokenGeneration model)
+        {
+            return Ok(new Response { Status = "Success", Message = "App created successfully!" });
+        }
+        [HttpPost("Login")]
+
+       
     }
 }
