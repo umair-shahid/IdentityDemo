@@ -18,10 +18,9 @@ namespace IdentityDemo.Controllers
             return new Response() { Success = true, Message = "Verification controller", Data = null };
         }
 
-        [HttpPost("Verify")]
+        [HttpGet("Verify")]
         public IActionResult Verify()
         {
-
             return Ok(new Response { Status = "Success", Message = "Verify successfully!" });
         }
     }

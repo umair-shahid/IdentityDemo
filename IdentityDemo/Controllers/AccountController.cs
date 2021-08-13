@@ -15,6 +15,7 @@ namespace IdentityDemo.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+
     public class AccountController: ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
