@@ -10,14 +10,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityDemo.Service
 {
-    public class SecurityService: ISecurity
+    public class SecurityService: ISecurityService
     {
         private readonly IConfiguration _config;
         public SecurityService(IConfiguration config)
         {
             _config = config;
         }
-        public Token GenerateToken(string name, string id, string role)
+        public Token GenerateToken(string name, string id, string role, string hashKey=null)
         {
 
             var myClaims = new List<Claim>
@@ -28,6 +28,10 @@ namespace IdentityDemo.Service
                     new Claim(ClaimTypes.Role, role),
 
                 };
+            if (hashKey != null)
+            {
+                myClaims.Add(new Claim(JwtRegisteredClaimNames.CHash, hashKey));
+            }
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
 
             var token = new JwtSecurityToken(

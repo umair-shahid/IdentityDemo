@@ -7,23 +7,26 @@ using IdentityDemo.Model;
 using IdentityDemo.Service.Interface;
 using IdentityDemo.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 
 namespace IdentityDemo.Service
 {
-    public class AppRegistrationService:IAppRegistration
+    public class AppRegistrationService:IAppRegistrationService
     {
 
         private readonly DbContext _context;
         private readonly IConfiguration _config;
-        private readonly ISecurity _security;
+        private readonly ISecurityService _security;
+        private readonly ICacheService _cache;
 
 
-        public AppRegistrationService(DbContext context, IConfiguration config, ISecurity security)
+        public AppRegistrationService(DbContext context, IConfiguration config, ISecurityService security, ICacheService cache)
         {
             _context = context;
             _config = config;
             _security = security;
+            _cache = cache;
         }
 
         public async Task<List<ApplicationRegisteration>> GetRegisteredApps()
@@ -54,7 +57,6 @@ namespace IdentityDemo.Service
 
             await _context.AddAsync<ApplicationRegisteration>(app);
             await _context.SaveChangesAsync();
-
             return app;
         }
 
@@ -64,7 +66,13 @@ namespace IdentityDemo.Service
             bool isValid = IsDetailValid(model, res);
             if (isValid)
             {
-                Token token = _security.GenerateToken(model.AppName, model.ClientId, "App");
+                Token token = _security.GenerateToken(model.AppName, model.ClientId, "App", res.SecretKey);
+                var options = new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(3),
+                   // SlidingExpiration = TimeSpan.FromHours(3)
+                };
+                await _cache.SetCache<Token>(res.AppName, token, options);
                 return token;
             }
             return null ;
@@ -78,7 +86,7 @@ namespace IdentityDemo.Service
                 {
                     DateTime dt1 = DateTime.Parse(storedModel.ExpireDate.ToString());
                     DateTime dt2 = DateTime.Now;
-                    return dt1.Date <= dt2.Date;
+                    return dt1.Date >= dt2.Date;
                 }
                 return true;
             }

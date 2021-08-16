@@ -17,8 +17,8 @@ namespace IdentityDemo.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly ISecurity _security;
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, ISecurity security)
+        private readonly ISecurityService _security;
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, ISecurityService security)
         {
             _userManager = userManager;
             _signInManager = signInManager;

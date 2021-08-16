@@ -17,9 +17,9 @@ namespace IdentityDemo.Controllers
 
     public class AppRegistrationController : Controller
     {
-        private readonly IAppRegistration _appRegService;
+        private readonly IAppRegistrationService _appRegService;
 
-        public AppRegistrationController(IAppRegistration appRegService)
+        public AppRegistrationController(IAppRegistrationService appRegService)
         {
             _appRegService = appRegService;
         }

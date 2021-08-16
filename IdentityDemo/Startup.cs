@@ -33,10 +33,14 @@ namespace IdentityDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var connectionString = Configuration.GetConnectionString("MySqlConnectionString");
             services.AddDbContext<DbContext>(options =>
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 1, 40))));
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration.GetConnectionString("RedisConnectionString");
+            });
             //services.AddAuthorization(config =>
             //{
             //    config.AddPolicy("App", options =>
@@ -47,9 +51,9 @@ namespace IdentityDemo
             //    });
             //});
             services.AddControllers();
-
-            services.AddScoped<IAppRegistration, AppRegistrationService>();
-            services.AddScoped<ISecurity, SecurityService>();
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddScoped<IAppRegistrationService, AppRegistrationService>();
+            services.AddScoped<ISecurityService, SecurityService>();
 
             // For Identity  
             services.AddIdentity<IdentityUser, IdentityRole>()

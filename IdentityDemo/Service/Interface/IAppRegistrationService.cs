@@ -5,7 +5,7 @@ using IdentityDemo.Model;
 
 namespace IdentityDemo.Service.Interface
 {
-    public interface IAppRegistration
+    public interface IAppRegistrationService
     {
         Task<List<ApplicationRegisteration>> GetRegisteredApps();
         Task<bool> IsAppExist(string name);
