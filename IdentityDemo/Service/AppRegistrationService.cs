@@ -67,12 +67,8 @@ namespace IdentityDemo.Service
             if (isValid)
             {
                 Token token = _security.GenerateToken(model.AppName, model.ClientId, "App", res.SecretKey);
-                var options = new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(3),
-                   // SlidingExpiration = TimeSpan.FromHours(3)
-                };
-                await _cache.SetCache<Token>(res.AppName, token, options);
+               
+                await _cache.SetCache<Token>(res.AppName, token);
                 return token;
             }
             return null ;
