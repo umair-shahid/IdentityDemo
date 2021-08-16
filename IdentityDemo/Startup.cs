@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using IdentityDemo.Service;
+using IdentityDemo.Service.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +36,20 @@ namespace IdentityDemo
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DbContext>(options =>
                 options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 1, 40))));
+
+            //services.AddAuthorization(config =>
+            //{
+            //    config.AddPolicy("App", options =>
+            //    {
+            //        options.RequireAuthenticatedUser();
+            //        options.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+            //        options.Requirements.Add(new ShouldBeApp());
+            //    });
+            //});
             services.AddControllers();
+
+            services.AddScoped<IAppRegistration, AppRegistrationService>();
+            services.AddScoped<ISecurity, SecurityService>();
 
             // For Identity  
             services.AddIdentity<IdentityUser, IdentityRole>()
@@ -62,6 +78,7 @@ namespace IdentityDemo
                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                  };
              });
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
