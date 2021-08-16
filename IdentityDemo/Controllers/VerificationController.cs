@@ -8,7 +8,6 @@ namespace IdentityDemo.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
     public class VerificationController : ControllerBase
     {
         [HttpGet]
@@ -19,6 +18,7 @@ namespace IdentityDemo.Controllers
         }
 
         [HttpGet("Verify")]
+        [Authorize]
         public IActionResult Verify()
         {
             return Ok(new Response { Status = "Success", Message = "Verify successfully!" });

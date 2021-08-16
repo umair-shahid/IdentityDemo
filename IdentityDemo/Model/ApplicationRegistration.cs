@@ -14,6 +14,6 @@ namespace IdentityDemo.Model
         public string SecretKey { get; set; }
         public string ClientId { get; set; }
         public DateTime CreatedAt { get; set; }
-
+        public DateTime? ExpireDate { get; set; }
     }
 }

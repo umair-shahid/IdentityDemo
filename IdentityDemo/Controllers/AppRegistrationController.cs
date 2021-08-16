@@ -7,6 +7,7 @@ using System.Linq;
 using IdentityDemo.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using IdentityDemo.Service.Interface;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,11 +19,11 @@ namespace IdentityDemo.Controllers
 
     public class AppRegistrationController : Controller
     {
-        private readonly AppRegistrationService _appRegService;
+        private readonly IAppRegistration _appRegService;
 
-        public AppRegistrationController(DbContext context, IConfiguration config)
+        public AppRegistrationController(IAppRegistration appRegService)
         {
-            _appRegService = new AppRegistrationService(context, config);
+            _appRegService = appRegService;
         }
 
 
@@ -82,7 +83,7 @@ namespace IdentityDemo.Controllers
                 }
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new Response { 
-                    Message = "Provided detail is not valid for this app",
+                    Message = "Provided detail is not valid for this app or secret key has been expired",
                     Data = res,
                     Success = false
                 });

@@ -18,6 +18,8 @@
     <None Remove="Microsoft.OpenApi" />
     <None Remove="Service\" />
     <None Remove="Utils\" />
+    <None Remove="AuthPolices\" />
+    <None Remove="Service\Interface\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -36,5 +38,7 @@
     <Folder Include="Model\" />
     <Folder Include="Service\" />
     <Folder Include="Utils\" />
+    <Folder Include="AuthPolices\" />
+    <Folder Include="Service\Interface\" />
   </ItemGroup>
 </Project>

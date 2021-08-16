@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using IdentityDemo.Model;
+using IdentityDemo.Service.Interface;
 using IdentityDemo.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityDemo.Service
 {
-    public class AppRegistrationService
+    public class AppRegistrationService:IAppRegistration
     {
 
         private readonly DbContext _context;
         private readonly IConfiguration _config;
+        private readonly ISecurity _security;
 
-        public AppRegistrationService(DbContext context, IConfiguration config)
+
+        public AppRegistrationService(DbContext context, IConfiguration config, ISecurity security)
         {
             _context = context;
             _config = config;
+            _security = security;
         }
 
         public async Task<List<ApplicationRegisteration>> GetRegisteredApps()
@@ -47,48 +47,43 @@ namespace IdentityDemo.Service
             var app = new ApplicationRegisteration() {
                 AppName = model.AppName,
                 ClientId = Guid.NewGuid().ToString(),
-                 SecretKey = EncryptionDecryption.EncryptText(CreateClientSecretKey(model.AppName)),
-                CreatedAt = DateTime.Now };
+                SecretKey = EncryptionDecryption.EncryptText(CreateClientSecretKey(model.AppName)),
+                CreatedAt = DateTime.Now,
+                ExpireDate = model.ExpireDate!=null?Convert.ToDateTime(model.ExpireDate):null
+            };
 
             await _context.AddAsync<ApplicationRegisteration>(app);
             await _context.SaveChangesAsync();
 
             return app;
-           
         }
+
         public async Task<Token> GenerateToken(TokenGeneration model)
         {
             ApplicationRegisteration res = await _context.RegisteredApps.Where(x=>x.AppName==model.AppName).FirstAsync();
             bool isValid = IsDetailValid(model, res);
             if (isValid)
             {
-
-                var myClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, model.AppName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-              
-              
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: _config["JWT:ValidIssuer"],
-                    audience: _config["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
-                    claims: myClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                    );
-                return new Token { AccessToken = new JwtSecurityTokenHandler().WriteToken(token), Expire= token.ValidTo };
+                Token token = _security.GenerateToken(model.AppName, model.ClientId, "App");
+                return token;
             }
             return null ;
         }
 
         private bool IsDetailValid(TokenGeneration currentModel, ApplicationRegisteration storedModel)
         {
-            return (currentModel.ClientId == storedModel.ClientId && EncryptionDecryption.DecryptText(currentModel.ClientSecret) == EncryptionDecryption.DecryptText(storedModel.SecretKey));
-            
+            if (currentModel.ClientId == storedModel.ClientId && EncryptionDecryption.DecryptText(currentModel.ClientSecret) == EncryptionDecryption.DecryptText(storedModel.SecretKey))
+            {
+                if (storedModel.ExpireDate!=null)
+                {
+                    DateTime dt1 = DateTime.Parse(storedModel.ExpireDate.ToString());
+                    DateTime dt2 = DateTime.Now;
+                    return dt1.Date <= dt2.Date;
+                }
+                return true;
+            }
+            return false;
+              
         }
         private string CreateClientSecretKey(string name)
         {
@@ -102,3 +97,10 @@ namespace IdentityDemo.Service
         }
     }
 }
+
+
+// expire date for secret key
+// option (never expire/ expire date) if expire date not set then it would be consider never expire
+// key encryption puplic and private key
+// token save
+// redis cache (key value pair) quick search
