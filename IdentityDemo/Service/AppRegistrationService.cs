@@ -38,7 +38,7 @@ namespace IdentityDemo.Service
             return res.Any();
         }
 
-        public async Task<ApplicationRegisteration> Register(ApplicationRegisteration model)
+        public async Task<ApplicationRegisteration> RegisterAppAndGetKey(ApplicationRegisteration model)
         {
             if (await IsAppExist(model.AppName))
             {

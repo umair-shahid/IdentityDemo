@@ -9,7 +9,7 @@ namespace IdentityDemo.Service.Interface
     {
         Task<List<ApplicationRegisteration>> GetRegisteredApps();
         Task<bool> IsAppExist(string name);
-        Task<ApplicationRegisteration> Register(ApplicationRegisteration model);
+        Task<ApplicationRegisteration> RegisterAppAndGetKey(ApplicationRegisteration model);
         Task<Token> GenerateToken(TokenGeneration model);
     }
 }

@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using IdentityDemo.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 using IdentityDemo.Service.Interface;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -46,17 +44,17 @@ namespace IdentityDemo.Controllers
             }
         }
 
-        [HttpPost("RegisterApp")]
-        public async Task<IActionResult> RegisterApp(ApplicationRegisteration model)
+        [HttpPost("RegisterAppAndGetKey")]
+        public async Task<IActionResult> RegisterAppAndGetKey(ApplicationRegisteration model)
         {
             try
             {
-                ApplicationRegisteration res = await _appRegService.Register(model);
+                ApplicationRegisteration res = await _appRegService.RegisterAppAndGetKey(model);
                 if (res==null)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "App already exist with this name" });
                 }
-                return Ok(new Response { Status = "Success", Message = "App created successfully!", Data = new ApplicationRegisteration() { AppName = res.AppName, ClientId = res.ClientId, SecretKey = res.SecretKey } });
+                return Ok(new Response { Status = "Success", Success=true, Message = "App created successfully!", Data = res });
 
             }
             catch (Exception ex)
