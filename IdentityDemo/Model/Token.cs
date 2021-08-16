@@ -16,4 +16,13 @@ namespace IdentityDemo.Model
         public object Sub { get; set; }
         public object CHash { get; set; }
     }
+    public class TokenGeneration
+    {
+        public TokenGeneration()
+        {
+        }
+        public string AppName { get; set; }
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
+    }
 }

@@ -39,7 +39,6 @@ namespace IdentityDemo.Controllers
         {
             try
             {
-                var httpContext = HttpContext;
                 var context = HttpContext.User;
                 var identity = context.Identity as ClaimsIdentity;
                 if (identity != null && context.HasClaim(x => x.Value == "App"))
@@ -49,7 +48,7 @@ namespace IdentityDemo.Controllers
                     var localStore = await _cacheService.GetFromCache<Token>(name);
                     if (localStore != null)
                     {
-                        var tokenString = httpContext.Request.Headers["Authorization"][0];
+                        var tokenString = HttpContext.Request.Headers["Authorization"][0];
                         var jwtEncodedString = tokenString.Substring(7); 
                         var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
                         
@@ -66,11 +65,9 @@ namespace IdentityDemo.Controllers
                 return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = "false", Message = "Not allowed to access this end point" });
             }
             catch (Exception ex)
-             {
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
             }
-           
         }
-        
     }
 }
