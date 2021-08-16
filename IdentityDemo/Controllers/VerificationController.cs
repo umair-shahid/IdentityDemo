@@ -49,8 +49,6 @@ namespace IdentityDemo.Controllers
                     var localStore = await _cacheService.GetFromCache<Token>(name);
                     if (localStore != null)
                     {
-                        var CHash = EncryptionDecryption.DecryptText(claim.First(c => c.Type == "c_hash").Value);
-
                         var tokenString = httpContext.Request.Headers["Authorization"][0];
                         var jwtEncodedString = tokenString.Substring(7); 
                         var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
@@ -65,7 +63,7 @@ namespace IdentityDemo.Controllers
                     }
                     return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = "false", Message = "Token expired, re-generate it" });
                 }
-                return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = "false", Message = "Not valid detail!" });
+                return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = "false", Message = "Not allowed to access this end point" });
             }
             catch (Exception ex)
              {
