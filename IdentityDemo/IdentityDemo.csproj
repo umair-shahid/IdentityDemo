@@ -17,7 +17,6 @@
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="Microsoft.OpenApi" />
     <None Remove="Service\" />
-    <None Remove="Utils\" />
     <None Remove="AuthPolices\" />
     <None Remove="Service\Interface\" />
     <None Remove="Microsoft.Extensions.Caching.StackExchangeRedis" />
@@ -39,7 +38,6 @@
   <ItemGroup>
     <Folder Include="Model\" />
     <Folder Include="Service\" />
-    <Folder Include="Utils\" />
     <Folder Include="AuthPolices\" />
     <Folder Include="Service\Interface\" />
   </ItemGroup>
