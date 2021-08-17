@@ -43,6 +43,7 @@ namespace IdentityDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
             }
         }
+        // If secret key expired then using this method a new secret key will generate
         [HttpPost("ReGenerateSecretKey")]
         public async Task<IActionResult> ReGenerateSecretKey(ApplicationRegisteration model)
         {
@@ -61,6 +62,7 @@ namespace IdentityDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
             }
         }
+
         [HttpPost("RegisterAppAndGetKey")]
         public async Task<IActionResult> RegisterAppAndGetKey(ApplicationRegisteration model)
         {
@@ -85,9 +87,6 @@ namespace IdentityDemo.Controllers
         {
             try
             {
-                var isExist = await _appRegService.IsAppExist(model.AppName);
-                if (isExist)
-                {
                     var res = await _appRegService.GenerateToken(model);
                     if (res != null)
                     {
@@ -105,9 +104,6 @@ namespace IdentityDemo.Controllers
                             Data = res,
                             Success = false
                         });
-                }
-
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "App not exist" });
             }
             catch (Exception ex)
             {

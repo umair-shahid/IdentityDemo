@@ -40,12 +40,14 @@ namespace IdentityDemo.Service
             return res;
         }
 
+        // Check app exist in DB
         public async Task<bool> IsAppExist(string name)
         {
             var res = await _context.RegisteredApps.AsNoTracking().Where(x => x.AppName == name).ToListAsync();
             return res.Any();
         }
 
+        // Register new app and generate client id and secret key
         public async Task<ApplicationRegisteration> RegisterAppAndGetKey(ApplicationRegisteration model)
         {
             if (await IsAppExist(model.AppName))
@@ -66,6 +68,8 @@ namespace IdentityDemo.Service
             return app;
         }
 
+        // If secret key expired, using this method we can update secret key and expire date
+
         public async Task<ApplicationRegisteration> UpdateSecretKey(ApplicationRegisteration model)
         {
             var data =  await _context.RegisteredApps.SingleOrDefaultAsync(x => x.AppName == model.AppName && x.ClientId==model.ClientId);
@@ -81,18 +85,23 @@ namespace IdentityDemo.Service
 
         }
 
+        // Generate token for app
         public async Task<Token> GenerateToken(TokenGeneration model)
         {
             ApplicationRegisteration res = await _context.RegisteredApps.AsNoTracking().Where(x=>x.AppName==model.AppName).FirstAsync();
-            bool isValid = IsDetailValid(model, res);
-            if (isValid)
+            if (res != null)
             {
-                Token token = _security.GenerateToken(model.AppName, model.ClientId, "App", res.SecretKey);
-               
-                await _cache.SetCache<Token>(res.AppName, token);
-                return token;
+                bool isValid = IsDetailValid(model, res);
+                if (isValid)
+                {
+                    Token token = _security.GenerateToken(model.AppName, model.ClientId, "App", res.SecretKey);
+
+                    await _cache.SetCache<Token>(res.AppName, token);
+                    return token;
+                }
             }
-            return null ;
+           
+            return null;
         }
 
 

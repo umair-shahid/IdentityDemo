@@ -17,6 +17,7 @@ namespace IdentityDemo.Service
         {
             _config = config;
         }
+        // Generate access token
         public Token GenerateToken(string name, string id, string role, string hashKey=null)
         {
 
