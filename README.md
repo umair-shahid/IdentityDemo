@@ -1,6 +1,6 @@
 # AspNet Identity
 
-**Once you clone/download this repo. After package restore please run "Update-Database" command in package console window. So, DB can setup and application run smoothly.**
+**Once you clone/download this repo. After package restore please run "Update-Database" command in package console window. So, DB can setup and application run smoothly. Also make sure redis cache has been setup. **
 
 ## Tech Stack
 ```
