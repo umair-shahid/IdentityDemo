@@ -10,6 +10,7 @@ namespace IdentityDemo.Model
         }
         [Key]
         public int Id { get; set; }
+        [Required]
         public string AppName { get; set; }
         public string SecretKey { get; set; }
         public string ClientId { get; set; }

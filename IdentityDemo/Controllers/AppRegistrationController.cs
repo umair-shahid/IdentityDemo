@@ -66,28 +66,37 @@ namespace IdentityDemo.Controllers
         [HttpPost("GenerateToken")]
         public async Task<IActionResult> GenerateToken(TokenGeneration model)
         {
-            var isExist = await _appRegService.IsAppExist(model.AppName);
-            if (isExist)
+            try
             {
-                var res = await _appRegService.GenerateToken(model);
-                if (res != null)
+                var isExist = await _appRegService.IsAppExist(model.AppName);
+                if (isExist)
                 {
-                    return Ok(new Response
+                    var res = await _appRegService.GenerateToken(model);
+                    if (res != null)
                     {
-                        Message = "Token generated successfully",
-                        Data = res,
-                        Success = true
-                    });
+                        return Ok(new Response
+                        {
+                            Message = "Token generated successfully",
+                            Data = res,
+                            Success = true
+                        });
+                    }
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response
+                        {
+                            Message = "Provided detail is not valid for this app or secret key has been expired",
+                            Data = res,
+                            Success = false
+                        });
                 }
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new Response { 
-                    Message = "Provided detail is not valid for this app or secret key has been expired",
-                    Data = res,
-                    Success = false
-                });
-            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success=false, Message = "App not exist" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "App not exist" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
+            }
+            
         }
     }
 }

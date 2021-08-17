@@ -47,6 +47,7 @@ namespace IdentityDemo
             services.AddSingleton<ICacheService, CacheService>();
             services.AddScoped<IAppRegistrationService, AppRegistrationService>();
             services.AddScoped<ISecurityService, SecurityService>();
+            services.AddSingleton<IRSAEncryptionService, RSAEncryptionService>();
 
             // For Identity  
             services.AddIdentity<IdentityUser, IdentityRole>()

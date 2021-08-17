@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace IdentityDemo.Model
 {
     public class Token
@@ -21,8 +23,11 @@ namespace IdentityDemo.Model
         public TokenGeneration()
         {
         }
+        [Required(ErrorMessage ="App name is required")]
         public string AppName { get; set; }
+        [Required(ErrorMessage = "Client id is required")]
         public string ClientId { get; set; }
+        [Required(ErrorMessage = "Client secret is required")]
         public string ClientSecret { get; set; }
     }
 }

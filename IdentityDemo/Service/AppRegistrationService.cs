@@ -5,9 +5,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using IdentityDemo.Model;
 using IdentityDemo.Service.Interface;
-using IdentityDemo.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 
 namespace IdentityDemo.Service
@@ -19,14 +17,21 @@ namespace IdentityDemo.Service
         private readonly IConfiguration _config;
         private readonly ISecurityService _security;
         private readonly ICacheService _cache;
+        private readonly IRSAEncryptionService _rsa;
 
 
-        public AppRegistrationService(DbContext context, IConfiguration config, ISecurityService security, ICacheService cache)
+        public AppRegistrationService(
+            DbContext context,
+            IConfiguration config,
+            ISecurityService security,
+            ICacheService cache,
+            IRSAEncryptionService rsa)
         {
             _context = context;
             _config = config;
             _security = security;
             _cache = cache;
+            _rsa = rsa;
         }
 
         public async Task<List<ApplicationRegisteration>> GetRegisteredApps()
@@ -50,7 +55,8 @@ namespace IdentityDemo.Service
             var app = new ApplicationRegisteration() {
                 AppName = model.AppName,
                 ClientId = Guid.NewGuid().ToString(),
-                SecretKey = EncryptionDecryption.EncryptText(CreateClientSecretKey(model.AppName)),
+                // SecretKey = EncryptionDecryption.EncryptText(CreateClientSecretKey(model.AppName)),
+                SecretKey = _rsa.Encrypt(CreateClientSecretKey(model.AppName)),
                 CreatedAt = DateTime.Now,
                 ExpireDate = model.ExpireDate!=null?Convert.ToDateTime(model.ExpireDate):null
             };
@@ -74,9 +80,12 @@ namespace IdentityDemo.Service
             return null ;
         }
 
+
+        #region Private Methods
         private bool IsDetailValid(TokenGeneration currentModel, ApplicationRegisteration storedModel)
         {
-            if (currentModel.ClientId == storedModel.ClientId && EncryptionDecryption.DecryptText(currentModel.ClientSecret) == EncryptionDecryption.DecryptText(storedModel.SecretKey))
+           // if (currentModel.ClientId == storedModel.ClientId && EncryptionDecryption.DecryptText(currentModel.ClientSecret) == EncryptionDecryption.DecryptText(storedModel.SecretKey))
+            if (currentModel.ClientId == storedModel.ClientId && _rsa.Decrypt(currentModel.ClientSecret) == _rsa.Decrypt(storedModel.SecretKey))
             {
                 if (storedModel.ExpireDate!=null)
                 {
@@ -99,12 +108,6 @@ namespace IdentityDemo.Service
             }
           
         }
+        #endregion
     }
 }
-
-
-// expire date for secret key
-// option (never expire/ expire date) if expire date not set then it would be consider never expire
-// key encryption puplic and private key
-// token save
-// redis cache (key value pair) quick search

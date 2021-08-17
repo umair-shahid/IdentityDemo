@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityDemo.Model;
 using IdentityDemo.Service.Interface;
-using IdentityDemo.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +19,12 @@ namespace IdentityDemo.Controllers
     public class VerificationController : ControllerBase
     {
         private readonly ICacheService _cacheService;
+        private readonly IRSAEncryptionService _rsa;
 
-        public VerificationController(ICacheService cacheService)
+        public VerificationController(ICacheService cacheService,IRSAEncryptionService rsa)
         {
             _cacheService = cacheService;
+            _rsa = rsa;
 
         }
         [HttpGet]
@@ -31,6 +32,18 @@ namespace IdentityDemo.Controllers
         public Response Get()
         {
             return new Response() { Success = true, Message = "Verification controller", Data = null };
+        }
+        [HttpGet("PublicKey")]
+        public IActionResult PublicKey()
+        {
+            try
+            {
+                return Ok(new Response { Data = _rsa.GetPublicKey(), Message = "Public key fetched successfully", Status = "Success", Success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
+            }
         }
 
         [HttpGet("Verify")]
@@ -52,9 +65,9 @@ namespace IdentityDemo.Controllers
                         var jwtEncodedString = tokenString.Substring(7); 
                         var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
                         
-                        var RequestToken = Helper.GetTokenDetail(null, true, token);
-                        TokenDetail LocalSaved = Helper.GetTokenDetail(localStore.AccessToken,false,null);
-                        if (Helper.VerifyDetail(RequestToken, LocalSaved))
+                        var RequestToken = GetTokenDetail(null, true, token);
+                        TokenDetail LocalSaved = GetTokenDetail(localStore.AccessToken,false,null);
+                        if (VerifyDetail(RequestToken, LocalSaved))
                         {
                             return Ok(new Response { Data = "", Message = "Verified successfully", Status = "Success", Success = true });
                         }
@@ -69,5 +82,43 @@ namespace IdentityDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
             }
         }
+        #region Private Methods
+
+        private bool VerifyDetail(TokenDetail requestToken, TokenDetail savedToken)
+        {
+
+            return (
+                requestToken.Jti.Equals(savedToken.Jti) &&
+                requestToken.Sub.Equals(savedToken.Sub) &&
+                requestToken.CHash.Equals(savedToken.CHash)
+                );
+        }
+
+        private TokenDetail GetTokenDetail(object stream, bool isBearer = false, JwtSecurityToken token = null)
+        {
+            if (isBearer)
+            {
+
+                return new TokenDetail
+                {
+                    Jti = token.Claims.First(c => c.Type == "jti").Value,
+                    Sub = token.Claims.First(c => c.Type == "sub").Value,
+                    // CHash = EncryptionDecryption.DecryptText(token.Claims.First(c => c.Type == "c_hash").Value)
+                    CHash = _rsa.Decrypt(token.Claims.First(c => c.Type == "c_hash").Value)
+                };
+            }
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(stream.ToString());
+            JwtSecurityToken tokenS = jsonToken as JwtSecurityToken;
+
+            return new TokenDetail
+            {
+                Jti = tokenS.Claims.First(claim => claim.Type == "jti").Value,
+                Sub = tokenS.Claims.First(claim => claim.Type == "sub").Value,
+               // CHash = EncryptionDecryption.DecryptText(tokenS.Claims.First(claim => claim.Type == "c_hash").Value)
+                CHash = _rsa.Decrypt(tokenS.Claims.First(claim => claim.Type == "c_hash").Value)
+            };
+        }
+        #endregion
     }
 }
