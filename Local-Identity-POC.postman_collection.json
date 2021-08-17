@@ -78,6 +78,20 @@
 		},
 		{
 			"name": "RegisterAppAndGetKey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"secret_id\", JSON.stringify(jsonData.data.secretKey));",
+							"pm.environment.set(\"client_id\", JSON.stringify(jsonData.data.clientId));",
+							"pm.environment.set(\"app_name\", JSON.stringify(jsonData.data.appName));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -99,7 +113,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"AppName\":\"Adminp1\",\n    \"ExpireDate\":\"2021-08-19\"\n}",
+					"raw": "{\n    \"AppName\":\"Adp1\",\n    \"ExpireDate\":\"2021-08-19\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
