@@ -77,21 +77,7 @@
 			"response": []
 		},
 		{
-			"name": "UpdateSecretKey",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"var jsonData = JSON.parse(responseBody);",
-							"pm.environment.set(\"app_name\", JSON.stringify(jsonData.data.appName));",
-							"pm.environment.set(\"secret_id\", JSON.stringify(jsonData.data.secretKey));",
-							"pm.environment.set(\"client_id\", JSON.stringify(jsonData.data.clientId));"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
+			"name": "RegisterAppAndGetKey",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -109,34 +95,61 @@
 						"key": "Content-Type",
 						"value": "application/json",
 						"type": "text"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer ",
-						"type": "text",
-						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"AppName\":\"AdminPanelAp1\",\n    \"ExpireDate\":\"2021-08-18\"\n}"
+					"raw": "{\n    \"AppName\":\"Adminp1\",\n    \"ExpireDate\":\"2021-08-19\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
-					"raw": "{{host}}/AppRegistration/ReGenerateSecretKey/",
+					"raw": "{{host}}/AppRegistration/RegisterAppAndGetKey/",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"AppRegistration",
-						"ReGenerateSecretKey",
+						"RegisterAppAndGetKey",
 						""
-					],
-					"query": [
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetRegisteredApps",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "Content-Type",
-							"value": "application/json",
-							"disabled": true
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
 						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/AppRegistration/GetRegisteredApps/",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"AppRegistration",
+						"GetRegisteredApps",
+						""
 					]
 				}
 			},
@@ -201,41 +214,6 @@
 			"response": []
 		},
 		{
-			"name": "GetRegisteredApps",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{access_token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{host}}/AppRegistration/GetRegisteredApps/",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"AppRegistration",
-						"GetRegisteredApps",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Verify",
 			"request": {
 				"auth": {
@@ -294,6 +272,72 @@
 						"Verification",
 						"PublicKey",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateSecretKey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"app_name\", JSON.stringify(jsonData.data.appName));",
+							"pm.environment.set(\"secret_id\", JSON.stringify(jsonData.data.secretKey));",
+							"pm.environment.set(\"client_id\", JSON.stringify(jsonData.data.clientId));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AppName\":\"AdminPanelApp1\",\n    \"ClientId\":\"7602fa6f-ad19-4aa2-b4eb-fc48a11fb2a6\",\n    \"ExpireDate\":\"2021-08-19\"\n}"
+				},
+				"url": {
+					"raw": "{{host}}/AppRegistration/ReGenerateSecretKey/",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"AppRegistration",
+						"ReGenerateSecretKey",
+						""
+					],
+					"query": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"disabled": true
+						}
 					]
 				}
 			},
