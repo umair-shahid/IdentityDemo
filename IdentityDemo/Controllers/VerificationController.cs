@@ -58,15 +58,15 @@ namespace IdentityDemo.Controllers
                 {
                     IEnumerable<Claim> claim = identity.Claims;
                     var name = claim.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
-                    var localStore = await _cacheService.GetFromCache<Token>(name);
-                    if (localStore != null)
+                    var cachedData = await _cacheService.GetFromCache<Token>(name);
+                    if (cachedData != null)
                     {
                         var tokenString = HttpContext.Request.Headers["Authorization"][0];
                         var jwtEncodedString = tokenString.Substring(7); 
                         var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
                         
                         var RequestToken = GetTokenDetail(null, true, token);
-                        TokenDetail LocalSaved = GetTokenDetail(localStore.AccessToken,false,null);
+                        TokenDetail LocalSaved = GetTokenDetail(cachedData.AccessToken,false,null);
                         if (VerifyDetail(RequestToken, LocalSaved))
                         {
                             return Ok(new Response { Data = "", Message = "Verified successfully", Status = "Success", Success = true });
