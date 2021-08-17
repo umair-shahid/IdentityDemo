@@ -10,6 +10,7 @@ namespace IdentityDemo.Service.Interface
         Task<List<ApplicationRegisteration>> GetRegisteredApps();
         Task<bool> IsAppExist(string name);
         Task<ApplicationRegisteration> RegisterAppAndGetKey(ApplicationRegisteration model);
+        Task<ApplicationRegisteration> UpdateSecretKey(ApplicationRegisteration model);
         Task<Token> GenerateToken(TokenGeneration model);
     }
 }

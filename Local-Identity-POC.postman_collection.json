@@ -77,7 +77,7 @@
 			"response": []
 		},
 		{
-			"name": "RegisterApp",
+			"name": "UpdateSecretKey",
 			"event": [
 				{
 					"listen": "test",
@@ -119,16 +119,16 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"AppName\":\"AdminPanelApp1\",\n    \"ExpireDate\":\"2021-08-18\"\n}"
+					"raw": "{\n    \"AppName\":\"AdminPanelAp1\",\n    \"ExpireDate\":\"2021-08-18\"\n}"
 				},
 				"url": {
-					"raw": "{{host}}/AppRegistration/RegisterAppAndGetKey/",
+					"raw": "{{host}}/AppRegistration/ReGenerateSecretKey/",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"AppRegistration",
-						"RegisterAppAndGetKey",
+						"ReGenerateSecretKey",
 						""
 					],
 					"query": [

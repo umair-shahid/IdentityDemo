@@ -66,6 +66,21 @@ namespace IdentityDemo.Service
             return app;
         }
 
+        public async Task<ApplicationRegisteration> UpdateSecretKey(ApplicationRegisteration model)
+        {
+            var data =  await _context.RegisteredApps.SingleOrDefaultAsync(x => x.AppName == model.AppName && x.ClientId==model.ClientId);
+            if (data!=null)
+            {
+                data.SecretKey = _rsa.Encrypt(CreateClientSecretKey(model.AppName));
+                data.CreatedAt = DateTime.Now;
+                data.ExpireDate = model.ExpireDate != null ? Convert.ToDateTime(model.ExpireDate) : null;
+                await _context.SaveChangesAsync();
+                return data;
+            }
+            return null;
+
+        }
+
         public async Task<Token> GenerateToken(TokenGeneration model)
         {
             ApplicationRegisteration res = await _context.RegisteredApps.Where(x=>x.AppName==model.AppName).FirstAsync();

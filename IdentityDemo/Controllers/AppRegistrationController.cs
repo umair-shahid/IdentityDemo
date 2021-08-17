@@ -33,7 +33,7 @@ namespace IdentityDemo.Controllers
                 var res = await _appRegService.GetRegisteredApps();
                 if (!res.Any())
                 {
-                    return Ok( new Response { Success = true, Message = "No any app exist" });
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "No any app exist" });
                 }
                 return Ok(new Response { Success=true, Message = "List of registered apps!", Data = res});
 
@@ -43,7 +43,24 @@ namespace IdentityDemo.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
             }
         }
+        [HttpPost("ReGenerateSecretKey")]
+        public async Task<IActionResult> ReGenerateSecretKey(ApplicationRegisteration model)
+        {
+            try
+            {
+                var res = await _appRegService.UpdateSecretKey(model);
+                if (res==null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "No any app exist" });
+                }
+                return Ok(new Response { Success = true, Message = "New secret key generated successfully!", Data = res });
 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Success = false, Message = "Something went wrong", Data = ex.Message });
+            }
+        }
         [HttpPost("RegisterAppAndGetKey")]
         public async Task<IActionResult> RegisterAppAndGetKey(ApplicationRegisteration model)
         {
