@@ -8,7 +8,7 @@
  Entity Framework (Code First)
 ```
 
-## Controller
+## Controllers
 ```
 1 - AccountController          -- Manage login and register user
 2 - AppRegistrationController  -- Manage app registration and generate access token for registered apps
