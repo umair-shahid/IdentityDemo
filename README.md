@@ -1,5 +1,7 @@
 # AspNet Identity
 
+**Once you clone/download this repo. After package restore please run "Update-Database" command in package console window. So, DB can setup and application run smoothly.**
+
 ## Tech Stack
 ```
  Dot Net 5.0 (C#)
