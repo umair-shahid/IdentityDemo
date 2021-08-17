@@ -36,13 +36,13 @@ namespace IdentityDemo.Service
 
         public async Task<List<ApplicationRegisteration>> GetRegisteredApps()
         {
-            var res = await _context.RegisteredApps.Select(x=>x).ToListAsync();
+            var res = await _context.RegisteredApps.AsNoTracking().Select(x=>x).ToListAsync();
             return res;
         }
 
         public async Task<bool> IsAppExist(string name)
         {
-            var res = await _context.RegisteredApps.Where(x => x.AppName == name).ToListAsync();
+            var res = await _context.RegisteredApps.AsNoTracking().Where(x => x.AppName == name).ToListAsync();
             return res.Any();
         }
 
@@ -83,7 +83,7 @@ namespace IdentityDemo.Service
 
         public async Task<Token> GenerateToken(TokenGeneration model)
         {
-            ApplicationRegisteration res = await _context.RegisteredApps.Where(x=>x.AppName==model.AppName).FirstAsync();
+            ApplicationRegisteration res = await _context.RegisteredApps.AsNoTracking().Where(x=>x.AppName==model.AppName).FirstAsync();
             bool isValid = IsDetailValid(model, res);
             if (isValid)
             {
