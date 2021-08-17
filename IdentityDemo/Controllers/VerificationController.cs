@@ -64,10 +64,10 @@ namespace IdentityDemo.Controllers
                         var tokenString = HttpContext.Request.Headers["Authorization"][0];
                         var jwtEncodedString = tokenString.Substring(7); 
                         var token = new JwtSecurityToken(jwtEncodedString: jwtEncodedString);
-                        
-                        var RequestToken = GetTokenDetail(null, true, token);
-                        TokenDetail LocalSaved = GetTokenDetail(cachedData.AccessToken,false,null);
-                        if (VerifyDetail(RequestToken, LocalSaved))
+
+                        TokenDetail RequestToken = GetTokenDetail(null, true, token);
+                        TokenDetail CachedToken = GetTokenDetail(cachedData.AccessToken,false,null);
+                        if (VerifyDetail(RequestToken, CachedToken))
                         {
                             return Ok(new Response { Data = "", Message = "Verified successfully", Status = "Success", Success = true });
                         }
